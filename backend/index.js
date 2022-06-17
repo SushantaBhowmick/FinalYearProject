@@ -61,7 +61,7 @@ app.post("/fact-reg",async (req,res)=>{
     email:req.body.email,
     contact:req.body.contact,
     gender:req.body.gender,
-    department:req.body.department,
+    department:req.body.department
 
   };
 
