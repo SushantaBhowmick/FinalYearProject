@@ -1,94 +1,56 @@
-const express = require('express');
-const cors=require("cors");
-const mongoose = require('mongoose');
+const express = require("express");
+const cors = require("cors");
 
-const bodyparser = require('body-parser');
+const v1 = require("./routes");
 
-const dotenv = require('dotenv');
-const connectDB = require('./database/connection');
-const Student=require("./model/student");
-
-const Faculty=require("./model/faculties");
-
-const ef=require("express-fileupload")
 const app = express();
-app.use(ef());
-const port = 5000
-app.use(cors());
-dotenv.config({path:'config.env'});
 
-//mongodb connection
+const HOSTNAME = "0.0.0.0";
+const PORT = 8080;
 
-connectDB();
+const handleRoutes = (app) => {
+  app.use(v1);
+};
 
-app.use(bodyparser.urlencoded({extended:true}))
+async function main() {
+  app.use(express.json());
+  app.use(cors());
+  if (process.env.NODE_ENV === "development")
+    app.use((req, res, next) => {
+      console.log(
+        "request body",
+        typeof req.body === "object"
+          ? JSON.stringify(req.body, null, 2)
+          : req.body
+      );
+      console.log(
+        "request headers",
+        typeof req.headers === "object"
+          ? JSON.stringify(req.headers, null, 2)
+          : req.headers
+      );
+      console.log(
+        "request query",
+        typeof req.query === "object"
+          ? JSON.stringify(req.query, null, 2)
+          : req.query
+      );
+      return next();
+    });
 
+  handleRoutes(app);
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
+  app
+    .listen(PORT, HOSTNAME, () => {
+      console.log(
+        "Successfully listening on port",
+        `http://${HOSTNAME}:${PORT}`
+      );
+    })
+    .on("error", console.error);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.abort();
 });
-
-app.post("/std-reg",async (req,res)=>{
-
-  var obj={
-    name:req.body.name,
-    fname:req.body.fname,
-    email:req.body.email,
-    contact:req.body.contact,
-    dob:req.body.dob,
-    gender:req.body.gender,
-    department:req.body.department,
-    address:req.body.address,
-    e_qualification:req.body.e_qualification,
-    job:req.body.job,
-    freshers:req.body.freshers,
-    experience:req.body.experience
-
-
-  };
-
-  Student.create(obj);
-  
-
-  res.json({msg:"Student-submited"});
-
-});
-
-app.post("/fact-reg",async (req,res)=>{
-
-  var obj={
-    name:req.body.name,
-    email:req.body.email,
-    contact:req.body.contact,
-    gender:req.body.gender,
-    department:req.body.department
-
-  };
-
-  Faculty.create(obj);
-  
-
-  res.json({msg:"faculties-submited"});
-
-});
-
-app.get("/liststd",async (req,res)=>{
-
-  var st=await Student.find();
-  
-
-  res.json(st);
-
-});
-app.get("/listfac",async (req,res)=>{
-
-  var st=await Faculty.find();
-  
-
-  res.json(st);
-
-});
-
-app.listen(port, () => {
-  console.log(`Successfully! listening on port ${port}`)
-})
