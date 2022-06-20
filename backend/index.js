@@ -15,7 +15,7 @@ const handleRoutes = (app) => {
 async function main() {
   app.use(express.json());
   app.use(cors());
-  if (process.env.NODE_ENV === "development")
+  // if (process.env.NODE_ENV === "development")
     app.use((req, res, next) => {
       console.log(
         "request body",

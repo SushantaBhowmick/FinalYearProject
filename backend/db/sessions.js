@@ -11,7 +11,7 @@ class Sessions extends Base {
           console.error(err);
           process.exit(1);
         });
-    }, 3000);
+    }, 10000);
   }
 
   async add({ email, token }) {

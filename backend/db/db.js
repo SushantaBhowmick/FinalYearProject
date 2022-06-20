@@ -1,6 +1,6 @@
 const { MongoClient } = require("mongodb");
 
-const CONNECTION_STRING = process.env.MONGO_URL || "mongodb://localhost:27017";
+const CONNECTION_STRING = process.env.MONGO_URL || "mongodb+srv://root:sush1234@cluster0.eo8ho.mongodb.net/addressbook?retryWrites=true&w=majority";
 
 const client = new MongoClient(CONNECTION_STRING);
 
@@ -11,6 +11,7 @@ class Base extends MongoClient {
     this._db = this.db("addressbook");
     this.connect()
       .then(() => {
+        console.log("Database connected!");
         this.col = this._db.collection(type);
       })
       .catch((err) => {
